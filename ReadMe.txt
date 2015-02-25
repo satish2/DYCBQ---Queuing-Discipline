@@ -1,47 +1,49 @@
 #Same as ReadMe.pdf
 
-DYCBQ enhances already existing Class-Based Queuing (CBQ). DYCBQ uses shared buffer along with dedicated queue to handle incoming and outgoing packets unlike CBQ which dedicates a queue to each class of users. This involved optimal allocation of shared buffer space between classes based on incoming traffic and dequeuing packets in Weighted Round Robin manner to satisfy Quality of Service (QOS) agreement. 
+DYCBQ enhances already existing Class-Based Queuing (CBQ). DYCBQ uses shared buffer along with dedicated queue to handle 
+incoming and outgoing packets unlike CBQ which dedicates a queue to each class of users. 
+This involved optimal allocation of shared buffer space between classes based on incoming traffic and dequeuing packets in Weighted Round Robin manner to satisfy Quality of Service (QOS) agreement. 
 
 Note: Developed and Tested in GENI (Global Environment for Network Innovations) http://www.geni.net/
 
 Contents:
 
-1.	sch_dycbq.c ñ This is the new queuing discipline ìdycbqî. This is modification of ìcbqî queuing discipline, where root can have two sub-classes i.,e 		children where each has dedicated space and shared space that is allocated based on incoming traffic.
-2.	sch_dyfifo.c ñ Actual functions which adjust shared space and enqueue to a FIFO queue and dequeue from a FIFO queue are written in this file. These functions are called by sch_dycbq, whenever a packet to respective class arrives. Because of this dependency, always insert sch_dyfifo module first and then sch_dycbq. Similarly, sch_dycbq must be removed first and then sch_dyfifo while removing module.
-3.	q_dycbq.c ñ This file adds support for dycbq in tc program. This enables tc program to identify new queuing discipline and pass its parameters to kernel space, where sch_dycbq.c will receive using netlink protocol.
-4.	Makefile ñ This contains instruction to create kernel modules sch_dycbq.ko and sch_dyfifo.ko
-5.	DemoSlice ñ GENI Slice request that is used during project demonstration.
-6.	initRouter ñ Instructions to install required packages and sources (iproute2 and linux kernel) in router. These are required to ìmakeî modules and enable support for dycbq by tc program.
-7.	platinumRoutes ñ adding routes in platinum node to enable pinging to other nodes.
-8.	regularRoutes ñ adding routes in regular node to enable pinging to other nodes.
-9.	routerRoutes ñ adding routes in router node and also enabling forwarding for this node.
-10.	serverRoutes ñ adding routes in server node to enable pinging to other nodes.
+1.	sch_dycbq.c ‚Äì This is the new queuing discipline ‚Äúdycbq‚Äù. This is modification of ‚Äúcbq‚Äù queuing discipline, where root can have two sub-classes i.,e 		children where each has dedicated space and shared space that is allocated based on incoming traffic.
+2.	sch_dyfifo.c ‚Äì Actual functions which adjust shared space and enqueue to a FIFO queue and dequeue from a FIFO queue are written in this file. These functions are called by sch_dycbq, whenever a packet to respective class arrives. Because of this dependency, always insert sch_dyfifo module first and then sch_dycbq. Similarly, sch_dycbq must be removed first and then sch_dyfifo while removing module.
+3.	q_dycbq.c ‚Äì This file adds support for dycbq in tc program. This enables tc program to identify new queuing discipline and pass its parameters to kernel space, where sch_dycbq.c will receive using netlink protocol.
+4.	Makefile ‚Äì This contains instruction to create kernel modules sch_dycbq.ko and sch_dyfifo.ko
+5.	DemoSlice ‚Äì GENI Slice request that is used during project demonstration.
+6.	initRouter ‚Äì Instructions to install required packages and sources (iproute2 and linux kernel) in router. These are required to ‚Äúmake‚Äù modules and enable support for dycbq by tc program.
+7.	platinumRoutes ‚Äì adding routes in platinum node to enable pinging to other nodes.
+8.	regularRoutes ‚Äì adding routes in regular node to enable pinging to other nodes.
+9.	routerRoutes ‚Äì adding routes in router node and also enabling forwarding for this node.
+10.	serverRoutes ‚Äì adding routes in server node to enable pinging to other nodes.
 -	While adding routes please take care respective interfaces are correctly entered.
-11.	dycbqCommands ñ Contains commands that attach dycbq queuing discipline to root class and create two classes platinum (prio 1) and regular (prio 7) with respective rates.
+11.	dycbqCommands ‚Äì Contains commands that attach dycbq queuing discipline to root class and create two classes platinum (prio 1) and regular (prio 7) with respective rates.
 
 
 Installing support for DYCBQ in Router:
 1.	Open exoGENI and import DemoSlice request and submit slice
 2.	After all nodes become active, log-in to router node.
-3.	execute ìvi initRouterî and copy contens of initRouter to this file. Click ìESCî and enter ì:wqî to save this file. In terminal, now execute ì chmod 777 initRouterî to give access permissions.
-4.	execute ì./initRouterî. Now all the necessary packages will get installed/downloaded. Enter ìYî whenever console requests to continue.
-5.	Now add necessary routes in router as given in ìrouterRoutesî file.
+3.	execute ‚Äúvi initRouter‚Äù and copy contens of initRouter to this file. Click ‚ÄúESC‚Äù and enter ‚Äú:wq‚Äù to save this file. In terminal, now execute ‚Äú chmod 777 initRouter‚Äù to give access permissions.
+4.	execute ‚Äú./initRouter‚Äù. Now all the necessary packages will get installed/downloaded. Enter ‚ÄúY‚Äù whenever console requests to continue.
+5.	Now add necessary routes in router as given in ‚ÄúrouterRoutes‚Äù file.
 6.	Navigate to iproute2 sources directory that was downloaded and extracted in step 4.
 7.	copy q_dycbq.c to <iproute2Sourcedir>/tc/ 
-8.	In iproute2Sourcedir, execute ìmake TCSO=q_dycbq.soî to create object that can be dynamically linked. Now execute ìexport TC_LIB_DIR=í./tcíî which enables this terminal session to use tc tool present in iproute2 source directory.
-9.	Now navigate to ì~/<linux-kernel-sources>/net/sched/î directory. Copy sch_dycbq.c and sch_dyfifo.c files and replace existing Makefile with Makefile submitted.
-10.	execute ìmakeî and then insert modules using ìinsmod sch_dyfifo.koî and ìinsmod sch_dycbqî in exact order.
-11.	navigate to ì~/<iproute2sources>/
+8.	In iproute2Sourcedir, execute ‚Äúmake TCSO=q_dycbq.so‚Äù to create object that can be dynamically linked. Now execute ‚Äúexport TC_LIB_DIR=‚Äô./tc‚Äô‚Äù which enables this terminal session to use tc tool present in iproute2 source directory.
+9.	Now navigate to ‚Äú~/<linux-kernel-sources>/net/sched/‚Äù directory. Copy sch_dycbq.c and sch_dyfifo.c files and replace existing Makefile with Makefile submitted.
+10.	execute ‚Äúmake‚Äù and then insert modules using ‚Äúinsmod sch_dyfifo.ko‚Äù and ‚Äúinsmod sch_dycbq‚Äù in exact order.
+11.	navigate to ‚Äú~/<iproute2sources>/
 
 
 Configuring Platinum Node in GENI:
-In platinum node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ìplatinumRoutesî file.
+In platinum node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ‚ÄúplatinumRoutes‚Äù file.
 
 Configuring Regular Node in GENI:
-In regular node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ìregularRoutesî file.
+In regular node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ‚ÄúregularRoutes‚Äù file.
 
 Configuring Server Node in GENI:
-In server node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ìserverRoutesî file.
+In server node, add routes so that it can ping regular as well as server nodes. Add routes based on content in ‚ÄúserverRoutes‚Äù file.
 
 Testing DYCBQ:
 	After configuring all nodes, ping from each node to other to verify connection. Now in router node, in iproute2 sources directory, execute commands present in dycbqcommands file. This will attach dycbq queuing discipline to root node.
@@ -55,12 +57,12 @@ Commands example:
 
 Above set of commands, specify output link rate is 10Mbit (10 megabits per second) and total shared space is 250 packets. Each packet on average is of length 1514 bytes that root class can receive. 
 
-It attached two classes (platinum prio 1 -> 1:1 and regular prio 7 -> 1:2) to root (1:0). Each class output rate is provided as 600kbit and 100kbit respectively. Also, limit (dedicated space ñ 400 packets and 300 packets) and initial variable space (200 packets for platinum and 50 for regular).
+It attached two classes (platinum prio 1 -> 1:1 and regular prio 7 -> 1:2) to root (1:0). Each class output rate is provided as 600kbit and 100kbit respectively. Also, limit (dedicated space ‚Äì 400 packets and 300 packets) and initial variable space (200 packets for platinum and 50 for regular).
 
 tc filter statements take care that packets coming from particular source ip address are forwarded to classes provided as flowids.
-1.	Now in platinum node, execute ìping ñf ñn 100 ñs 1514 ñi 0.001î and in regular node execute ìping ñf ñn 100 ñs 1514 ñi 0.001î.
-2.	After ping is done, in router node execute ìdmesg ñcî to check how incoming traffic was to each class. 
-3.	Executing ìdmesg | grep -o -P 'csv.{0,40}'î will show entries in following order (Pt ñ Platinum & Rg ñRegular)
+1.	Now in platinum node, execute ‚Äúping ‚Äìf ‚Äìn 100 ‚Äìs 1514 ‚Äìi 0.001‚Äù and in regular node execute ‚Äúping ‚Äìf ‚Äìn 100 ‚Äìs 1514 ‚Äìi 0.001‚Äù.
+2.	After ping is done, in router node execute ‚Äúdmesg ‚Äìc‚Äù to check how incoming traffic was to each class. 
+3.	Executing ‚Äúdmesg | grep -o -P 'csv.{0,40}'‚Äù will show entries in following order (Pt ‚Äì Platinum & Rg ‚ÄìRegular)
 	PtpacketsReceived,PtOccupancy,PtTotalSpace,RgpacketsReceived,RgOccupancy,RgTotalSpace
 	Scrolling down the entries shows how totalSpace (dedicated + shared) is behaving according to incoming traffic. PtPacketsReceived -> This shows number of packets received of the total 50 packets that was considered while adjusting.
 	Similarly iperf tool can be used to analyze packet loss when UDP transmissions and throughput in case of TCP transmissions.
