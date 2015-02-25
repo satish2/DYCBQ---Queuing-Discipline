@@ -1,0 +1,5 @@
+sysctl -w net.ipv4.ip_forward=1
+route add -net 172.16.5.15 netmask 255.255.255.255 gw 172.16.5.25 dev eth2
+route add -net 172.16.5.10 netmask 255.255.255.255 gw 172.16.5.18 dev eth3
+route add -net 172.16.5.32 netmask 255.255.255.255 gw 172.16.5.22 dev eth1
+

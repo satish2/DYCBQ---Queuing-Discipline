@@ -1,0 +1,17 @@
+tc/tc qdisc add dev eth1 root handle 1: cbq bandwidth 10Mbit avpkt 1000
+tc/tc class add dev eth1 parent 1:0 classid 1:1 cbq avpkt 1024 rate 600kbit allot 1514 weight 50kbit bounded prio 1
+tc/tc class add dev eth1 parent 1:0 classid 1:2 cbq avpkt 1000 rate 100Kbit allot 1514 weight 10Kbit bounded prio 7
+tc/tc qdisc add dev eth1 parent 1:1 handle 20: pfifo limit 500
+tc/tc qdisc add dev eth1 parent 1:2 handle 30: pfifo limit 450
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.15 flowid 1:1
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.10 flowid 1:2
+
+
+tc/tc filter delete dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.15 flowid 1:1
+tc/tc filter delete dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.10 flowid 1:2
+tc/tc qdisc delete dev eth1 parent 1:1 handle 20: pfifo limit 50
+tc/tc qdisc delete dev eth1 parent 1:2 handle 20: pfifo limit 45
+tc/tc class delete dev eth1 parent 1:0 classid 1:1 cbq avpkt 1024 rate 500kbit allot 1514 weight 50kbit bounded prio 1
+tc/tc class delete dev eth1 parent 1:0 classid 1:2 cbq avpkt 1000 rate 100Kbit allot 1514 weight 10Kbit bounded prio 7
+tc/tc qdisc delete dev eth1 root handle 1: cbq bandwidth 10Mbit avpkt 1000
+

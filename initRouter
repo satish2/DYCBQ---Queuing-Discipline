@@ -1,0 +1,11 @@
+apt-get update
+apt-get install make
+apt-get install gcc
+wget https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-3.17.0.tar.gz
+apt-get install dpkg-dev
+apt-get source linux-image-$(uname -r)
+tar -xzvf iproute2-3.17.0.tar.gz
+apt-get install pkg-config
+apt-get install iptables-dev
+apt-get install libdb4o-cil-dev libdb-dev bison flex
+

@@ -1,0 +1,21 @@
+dmesg | grep -o -P 'csv.{0,40}'
+
+Command set - 1
+tc/tc qdisc add dev eth1 root handle 1: dycbq bandwidth 10Mbit avpkt 1000 totalSharedSpace 50
+tc/tc class add dev eth1 parent 1:0 classid 1:1 dycbq rate 60kbit allot 3008 weight 50kbit variableSpace 20 limit 30 prio 1
+tc/tc class add dev eth1 parent 1:0 classid 1:2 dycbq rate 10Kbit allot 508 weight 10Kbit variableSpace 5 limit 40 prio 7
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.15 flowid 1:1
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.10 flowid 1:2
+
+Command set - 2
+tc/tc qdisc add dev eth1 root handle 1: dycbq bandwidth 10Mbit avpkt 1000 totalSharedSpace 250
+tc/tc class add dev eth1 parent 1:0 classid 1:1 dycbq rate 600kbit allot 1514 variableSpace 200 limit 400 prio 1
+tc/tc class add dev eth1 parent 1:0 classid 1:2 dycbq rate 100Kbit allot 1514 variableSpace 50 limit 300 prio 7
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.15 flowid 1:1
+tc/tc filter add dev eth1 protocol ip parent 1:0 prio 1 u32 match ip src 172.16.5.10 flowid 1:2
+
+To Delete qdisc attached to egress interface eth1 at root
+tc/tc qdisc delete dev eth1 root
+
+
+
