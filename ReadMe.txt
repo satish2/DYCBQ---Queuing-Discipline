@@ -1,5 +1,3 @@
-#Same as ReadMe.pdf
-
 DYCBQ enhances already existing Class-Based Queuing (CBQ). DYCBQ uses shared buffer along with dedicated queue to handle 
 incoming and outgoing packets unlike CBQ which dedicates a queue to each class of users. 
 This involved optimal allocation of shared buffer space between classes based on incoming traffic and dequeuing packets in Weighted Round Robin manner to satisfy Quality of Service (QOS) agreement. 
